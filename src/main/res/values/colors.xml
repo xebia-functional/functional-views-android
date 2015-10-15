@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~  Copyright (C) 2015 47 Degrees, LLC http://47deg.com hello@47deg.com
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License"); you may
+  ~ not use this file except in compliance with the License. You may obtain
+  ~ a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <!-- Default -->
+    <color name="primary">#2D4053</color>
+    <color name="primary_dark">#ff192533</color>
+    <color name="ascent">#F2554A</color>
+    <color name="control_highlight">#ff49cb94</color>
+
+    <color name="placeholder_default">#E4E9EB</color>
+
+    <color name="default_fab_color">#ff49cb94</color>
+    <color name="default_fab_color_dark">#ff3da97c</color>
+    <color name="default_fab_shadow_color">#46000000</color>
+
+    <color name="background_list_selector_pressed">#11000000</color>
+    <color name="ripple_mask">#22000000</color>
+
+</resources>
