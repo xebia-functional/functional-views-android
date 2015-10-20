@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-package com.fortysevendeg.android.functionalview.ui.main
+package com.fortysevendeg.android.functionalview
 
-trait DataService {
+import macroid.ContextWrapper
 
-  val categories = Seq(
-    "animals",
-    "city",
-    "food",
-    "people",
-    "sports",
-    "technics")
+package object ui {
 
-  def getData = categories flatMap { category =>
-    1 to 5 map { i =>
-     Item(category, s"http://lorempixel.com/500/500/$category/$i")
-    }
-  }
+  type ImplicitContext = ContextWrapper
 
 }
-
-case class Item(category: String, url: String)

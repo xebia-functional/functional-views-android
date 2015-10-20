@@ -29,7 +29,6 @@ libraryDependencies ++= Seq(
   aar(androidDesign),
   aar(androidCardView),
   aar(androidRecyclerview),
-  aar(macroidExtras),
   picasso,
   specs2,
   mockito,

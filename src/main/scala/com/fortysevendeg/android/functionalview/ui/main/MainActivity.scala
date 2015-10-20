@@ -16,24 +16,39 @@
 
 package com.fortysevendeg.android.functionalview.ui.main
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.fortysevendeg.android.functionalview.{R, TypedFindView}
+import com.fortysevendeg.android.functionalview.{R, TR, TypedFindView}
 import macroid.Contexts
 import macroid.FullDsl._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class MainActivity
   extends AppCompatActivity
   with TypedFindView
-  with MainComposer
-  with DataService
-  with Contexts[AppCompatActivity] {
+  with MainView
+  with MainPresentationLogic
+  with MainBusinessLogic
+  with Contexts[Activity] {
+
+  lazy val recycler = Option(findView(TR.recycler))
+
+  lazy val fabActionButton = Option(findView(TR.fab_action_button))
 
   override def onCreate(savedInstanceState: Bundle) = {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.main_activity)
-    toolBar foreach setSupportActionBar
-    runUi(composition(getData))
+
+    val maybeToolBar = Option(findView(TR.toolbar))
+    maybeToolBar map { toolbar =>
+      setSupportActionBar(toolbar)
+    }
+
+    fetchAsyncData map { data =>
+      runUi(initUi(data))
+    }
   }
+
 
 }

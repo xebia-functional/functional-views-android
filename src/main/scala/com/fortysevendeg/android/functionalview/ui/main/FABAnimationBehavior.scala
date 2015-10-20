@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Promise
 
 class FABAnimationBehavior
-    extends FloatingActionButton.Behavior {
+  extends FloatingActionButton.Behavior {
 
   def this(context: Context, attrs: AttributeSet) = this()
 
@@ -41,35 +41,34 @@ class FABAnimationBehavior
   val duration = 200L
 
   override def onStartNestedScroll(
-      coordinatorLayout: CoordinatorLayout,
-      child: FloatingActionButton,
-      directTargetChild: View,
-      target: View,
-      nestedScrollAxes: Int): Boolean =
+    coordinatorLayout: CoordinatorLayout,
+    child: FloatingActionButton,
+    directTargetChild: View,
+    target: View,
+    nestedScrollAxes: Int): Boolean =
     nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL ||
-        super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes)
+      super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes)
 
   override def onNestedScroll(
-      coordinatorLayout: CoordinatorLayout,
-      child: FloatingActionButton,
-      target: View,
-      dxConsumed: Int,
-      dyConsumed: Int,
-      dxUnconsumed: Int,
-      dyUnconsumed: Int): Unit = {
+    coordinatorLayout: CoordinatorLayout,
+    child: FloatingActionButton,
+    target: View,
+    dxConsumed: Int,
+    dyConsumed: Int,
+    dxUnconsumed: Int,
+    dyUnconsumed: Int): Unit = {
     super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed)
-
-    (dyConsumed, child) match {
-      case (d, c) if d > 0 && !isAnimatingOut && c.getVisibility == View.VISIBLE =>
+    (dyConsumed, Option(child), isAnimatingOut) match {
+      case (d, Some(c), false) if d > 0 && c.getVisibility == View.VISIBLE =>
         runUi(Option(child) <~~ animateOut)
-      case (d, c) if d < 0 && c.getVisibility != View.VISIBLE =>
+      case (d, Some(c), _) if d < 0 && c.getVisibility != View.VISIBLE =>
         runUi(Option(child) <~~ animateIn)
       case _ =>
     }
   }
 
   val animateIn = Snail[FloatingActionButton] {
-    view ⇒
+    view =>
       view.setVisibility(View.VISIBLE)
       val animPromise = Promise[Unit]()
       view.animate
@@ -77,16 +76,16 @@ class FABAnimationBehavior
         .setInterpolator(interpolator)
         .setDuration(duration)
         .setListener(new AnimatorListenerAdapter {
-          override def onAnimationEnd(animation: Animator) {
+          override def onAnimationEnd(animation: Animator): Unit = {
             super.onAnimationEnd(animation)
-            animPromise.success()
+            animPromise.success((): Unit)
           }
         }).start()
       animPromise.future
   }
 
   val animateOut = Snail[FloatingActionButton] {
-    view ⇒
+    view =>
       val animPromise = Promise[Unit]()
       val y = view.getHeight + (view.getPaddingBottom * 2)
       view.animate
@@ -102,11 +101,11 @@ class FABAnimationBehavior
             super.onAnimationCancel(animation)
             isAnimatingOut = false
           }
-          override def onAnimationEnd(animation: Animator) {
+          override def onAnimationEnd(animation: Animator): Unit = {
             super.onAnimationEnd(animation)
             isAnimatingOut = false
             view.setVisibility(View.GONE)
-            animPromise.success()
+            animPromise.success((): Unit)
           }
         }).start()
       animPromise.future
