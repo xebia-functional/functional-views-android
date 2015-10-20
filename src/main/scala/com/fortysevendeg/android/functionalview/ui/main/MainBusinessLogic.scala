@@ -34,7 +34,7 @@ trait MainBusinessLogic {
     Thread.sleep(1000)
     categories flatMap { category =>
       1 to 5 map { i =>
-        Item(category, s"http://lorempixel.com/500/500/$category/$i")
+        Item(category, s"http://lorempixel.com/500/500/$category/$i", selected = false)
       }
     }
   }

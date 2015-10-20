@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity
 import com.fortysevendeg.android.functionalview.{R, TR, TypedFindView}
 import macroid.Contexts
 import macroid.FullDsl._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class MainActivity

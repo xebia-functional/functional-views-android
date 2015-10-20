@@ -36,10 +36,16 @@ trait MainPresentationLogic {
     initRecycler(items) ~ initFabButton
 
   private[this] def initRecycler(items: Seq[Item])(implicit context: ImplicitContext): Ui[_] =
-    recycler <~ Transformations.recycler(items)
+    recycler <~ Transformations.recycler(items, onClickItemListener)
 
   private[this] def initFabButton(implicit context: ImplicitContext): Ui[_] =
-    fabActionButton <~ Transformations.actionButton
+    fabActionButton <~ Transformations.actionButton(onClickFabListener)
+
+  private[this] def onClickItemListener(position: Int)(implicit context: ImplicitContext): Ui[_] =
+    recycler <~ Transformations.recyclerSwapAdapter(position)
+
+  private[this] def onClickFabListener()(implicit context: ImplicitContext): Ui[_] =
+    recycler <~ Transformations.recyclerItemsSelected
 
 }
 
@@ -53,20 +59,43 @@ trait MainView {
 
 object Transformations {
 
-  def recycler(items: Seq[Item])(implicit context: ImplicitContext) = Tweak[RecyclerView] {
+  def recycler(items: Seq[Item], clickListener: Int => Ui[_])(implicit context: ImplicitContext) = Tweak[RecyclerView] {
     recycler =>
-      recycler.setAdapter(new ImageListAdapter(items))
+      recycler.setAdapter(new ImageListAdapter(items, clickListener))
       recycler.setHasFixedSize(true)
       recycler.setLayoutManager(new GridLayoutManager(context.bestAvailable, 2))
   }
 
-  def actionButton(implicit context: ImplicitContext) = Tweak[FloatingActionButton] {
+  def actionButton(clickListener: () => Ui[_])(implicit context: ImplicitContext) = Tweak[FloatingActionButton] {
     fab =>
       fab.setImageResource(R.drawable.ic_add)
       fab.setOnClickListener(new OnClickListener {
-        override def onClick(v: View): Unit =
-          Toast.makeText(context.application, R.string.add_item, Toast.LENGTH_LONG).show()
+        override def onClick(v: View): Unit = runUi(clickListener())
       })
+  }
+
+  def recyclerSwapAdapter(position: Int)(implicit context: ImplicitContext) = Tweak[RecyclerView] {
+    recycler =>
+      recycler.getAdapter match {
+        case a: ImageListAdapter =>
+          val items = a.items.zipWithIndex map {
+            case (item, pos) => if (pos == position) item.copy(selected = !item.selected) else item
+          }
+          recycler.swapAdapter(a.copy(items = items), false)
+        case _ =>
+          Toast.makeText(context.application, R.string.error, Toast.LENGTH_SHORT).show()
+      }
+  }
+
+  def recyclerItemsSelected(implicit context: ImplicitContext) = Tweak[RecyclerView] {
+    recycler =>
+      recycler.getAdapter match {
+        case a: ImageListAdapter =>
+          val count = a.items count (_.selected)
+          Toast.makeText(context.application, context.application.getString(R.string.items_selected, count.toString), Toast.LENGTH_SHORT).show()
+        case _ =>
+          Toast.makeText(context.application, R.string.error, Toast.LENGTH_SHORT).show()
+      }
   }
 
 }

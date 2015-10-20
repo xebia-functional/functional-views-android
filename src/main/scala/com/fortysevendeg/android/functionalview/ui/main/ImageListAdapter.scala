@@ -16,7 +16,6 @@
 
 package com.fortysevendeg.android.functionalview.ui.main
 
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
 import android.view.{LayoutInflater, View, ViewGroup}
 import android.widget.{ImageView, TextView}
@@ -26,7 +25,7 @@ import com.fortysevendeg.android.functionalview.{R, TR, TypedFindView}
 import macroid.FullDsl._
 import macroid.Ui
 
-case class ImageListAdapter(items: Seq[Item])(implicit context: ImplicitContext)
+case class ImageListAdapter(items: Seq[Item], clickListener: Int => Ui[_])(implicit context: ImplicitContext)
   extends RecyclerView.Adapter[ImageViewHolder] {
 
   override def onCreateViewHolder(parent: ViewGroup, i: Int): ImageViewHolder = {
@@ -37,7 +36,7 @@ case class ImageListAdapter(items: Seq[Item])(implicit context: ImplicitContext)
   override def getItemCount: Int = items.size
 
   override def onBindViewHolder(viewHolder: ImageViewHolder, position: Int): Unit =
-    runUi(viewHolder.bind(items(position)))
+    runUi(viewHolder.bind(items(position), position, clickListener))
 
 }
 
@@ -49,18 +48,19 @@ trait AdapterItemView {
 
   val description: Option[TextView]
 
+  val check: Option[ImageView]
+
 }
 
 trait AdapterItemPresentationLogic {
 
   self: AdapterItemView =>
 
-  def bind(item: Item)(implicit context: ImplicitContext): Ui[_] =
-    (parent <~ On.click(itemClicked(parent, item))) ~
+  def bind(item: Item, position: Int, clickListener: Int => Ui[_])(implicit context: ImplicitContext): Ui[_] =
+    (parent <~ On.click(clickListener(position))) ~
       (image <~ srcImage(item.url)) ~
-      (description <~ text(item.category))
-
-  def itemClicked(view: View, item: Item): Ui[_] = Ui (Snackbar.make(view, item.category, Snackbar.LENGTH_LONG).show())
+      (description <~ text(item.category)) ~
+      (check <~ (if (item.selected) show else hide))
 
 }
 
@@ -72,6 +72,7 @@ case class ImageViewHolder(parent: View)
 
   lazy val image = Option(findView(TR.image))
   lazy val description = Option(findView(TR.text))
+  lazy val check = Option(findView(TR.check))
 
   override protected def findViewById(id: Int): View = parent.findViewById(id)
 

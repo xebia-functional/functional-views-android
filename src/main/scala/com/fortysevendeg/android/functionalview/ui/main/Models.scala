@@ -16,4 +16,4 @@
 
 package com.fortysevendeg.android.functionalview.ui.main
 
-case class Item(category: String, url: String)
+case class Item(category: String, url: String, selected: Boolean)

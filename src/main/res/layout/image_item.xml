@@ -21,27 +21,35 @@
              android:layout_height="match_parent"
              android:foreground="?android:attr/selectableItemBackground">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:orientation="vertical"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:padding="@dimen/padding_default_small">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/padding_default_small">
 
         <ImageView
-                android:id="@+id/image"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/height_list_image"
-                android:background="@android:color/darker_gray"
-                android:scaleType="centerCrop"/>
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_list_image"
+            android:background="@android:color/darker_gray"
+            android:scaleType="centerCrop"/>
 
         <TextView
-                android:id="@+id/text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/padding_default_large"
-                android:textColor="@android:color/white"
-                android:background="@android:color/black"/>
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_default_large"
+            android:textColor="@android:color/white"
+            android:background="@android:color/black"/>
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/check"
+        android:src="@drawable/ic_selected"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+    />
 
 </FrameLayout>

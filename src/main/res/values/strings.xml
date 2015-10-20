@@ -18,6 +18,7 @@
 <resources>
 
     <string name="app_name">Functional View Android</string>
-    <string name="add_item">Add new item</string>
+    <string name="items_selected">%s items selected</string>
+    <string name="error">Unexpected error</string>
 
 </resources>
