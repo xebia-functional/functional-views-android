@@ -22,22 +22,29 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 trait MainBusinessLogic {
 
-  val categories = Seq(
-    "animals",
-    "city",
-    "food",
-    "people",
-    "sports",
-    "technics")
+  import MainBusinessLogic._
 
   def fetchAsyncData: Future[Seq[Item]] = Future {
     Thread.sleep(1000)
     categories flatMap { category =>
       1 to 5 map { i =>
-        Item(category, s"http://lorempixel.com/500/500/$category/$i", selected = false)
+        Item(category, i, selected = false)
       }
     }
   }
+
+}
+
+object MainBusinessLogic {
+  val animals = "animals"
+  val city = "city"
+  val food = "food"
+  val people = "people"
+  val sports = "sports"
+  val technics = "technics"
+  val nature = "nature"
+
+  val categories = Seq(animals, city, food, people, sports, technics)
 
 }
 

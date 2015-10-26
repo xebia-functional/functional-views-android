@@ -15,14 +15,22 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <string name="app_name">Functional View Android</string>
-    <string name="items_selected">%s items selected</string>
-    <string name="error">Unexpected error</string>
-    <string name="useCase1">Use Case 1: Map</string>
-    <string name="useCase2">Use Case 2: Filter</string>
-    <string name="useCase3">Use Case 3: SortBy</string>
-    <string name="useCase4">Use Case 4: Count Selected</string>
+    <item
+        android:id="@+id/useCase1"
+        android:title="@string/useCase1"/>
 
-</resources>
+    <item
+        android:id="@+id/useCase2"
+        android:title="@string/useCase2"/>
+
+    <item
+        android:id="@+id/useCase3"
+        android:title="@string/useCase3"/>
+
+    <item
+        android:id="@+id/useCase4"
+        android:title="@string/useCase4"/>
+
+</menu>

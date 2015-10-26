@@ -16,4 +16,6 @@
 
 package com.fortysevendeg.android.functionalview.ui.main
 
-case class Item(category: String, url: String, selected: Boolean)
+case class Item(category: String, position: Int, selected: Boolean){
+  def url = s"http://lorempixel.com/500/500/$category/$position"
+}

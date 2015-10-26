@@ -17,12 +17,14 @@
 package com.fortysevendeg.android.functionalview.ui.main
 
 import android.support.design.widget.FloatingActionButton
-import android.support.v7.widget.{GridLayoutManager, RecyclerView}
-import android.view.View
+import android.support.v7.widget.PopupMenu.OnMenuItemClickListener
+import android.support.v7.widget.{GridLayoutManager, PopupMenu, RecyclerView}
 import android.view.View.OnClickListener
+import android.view.{MenuItem, View}
 import android.widget.Toast
 import com.fortysevendeg.android.functionalview._
 import com.fortysevendeg.android.functionalview.ui.ImplicitContext
+import com.fortysevendeg.android.functionalview.ui.main.MainBusinessLogic._
 import macroid.FullDsl._
 import macroid.{Tweak, Ui}
 
@@ -45,7 +47,16 @@ trait MainPresentationLogic {
     recycler <~ Transformations.recyclerSwapAdapter(position)
 
   private[this] def onClickFabListener()(implicit context: ImplicitContext): Ui[_] =
-    recycler <~ Transformations.recyclerItemsSelected
+    fabActionButton <~ Transformations.showPopupMenu(onClickMenuListener)
+
+  private[this] def onClickMenuListener(menuItem: Int)(implicit context: ImplicitContext): Ui[_] =
+    menuItem match {
+      case R.id.useCase1 => recycler <~ Transformations.useCase1
+      case R.id.useCase2 => recycler <~ Transformations.useCase2(Seq(animals, nature, food))
+      case R.id.useCase3 => recycler <~ Transformations.useCase3
+      case R.id.useCase4 => recycler <~ Transformations.useCase4
+      case _ => Ui.nop
+    }
 
 }
 
@@ -87,7 +98,58 @@ object Transformations {
       }
   }
 
-  def recyclerItemsSelected(implicit context: ImplicitContext) = Tweak[RecyclerView] {
+  def showPopupMenu(clickMenuListener: (Int) => Ui[_])(implicit context: ImplicitContext) = Tweak[FloatingActionButton] {
+    fab =>
+      val popup = new PopupMenu(context.bestAvailable, fab)
+      popup.inflate(R.menu.use_cases)
+      popup.setOnMenuItemClickListener(new OnMenuItemClickListener {
+        override def onMenuItemClick(menuItem: MenuItem): Boolean = {
+          runUi(clickMenuListener(menuItem.getItemId))
+          true
+        }
+      })
+      popup.show()
+  }
+
+  def useCase1(implicit context: ImplicitContext) = Tweak[RecyclerView] {
+    recycler =>
+      recycler.getAdapter match {
+        case a: ImageListAdapter =>
+          val animalsConvertedToNature = a.items map {
+            case Item(`animals`, position, selected) => Item(nature, position, selected)
+            case i => i
+          }
+          recycler.swapAdapter(a.copy(animalsConvertedToNature), false)
+        case _ =>
+          Toast.makeText(context.application, R.string.error, Toast.LENGTH_SHORT).show()
+      }
+  }
+
+  def useCase2(filterCategories: Seq[String])(implicit context: ImplicitContext) = Tweak[RecyclerView] {
+    recycler =>
+      recycler.getAdapter match {
+        case a: ImageListAdapter =>
+          val animalItems = a.items filter { item =>
+            filterCategories.contains(item.category)
+          }
+          recycler.swapAdapter(a.copy(animalItems), false)
+        case _ =>
+          Toast.makeText(context.application, R.string.error, Toast.LENGTH_SHORT).show()
+      }
+  }
+
+  def useCase3(implicit context: ImplicitContext) = Tweak[RecyclerView] {
+    recycler =>
+      recycler.getAdapter match {
+        case a: ImageListAdapter =>
+          val animalItems = a.items sortBy(_.category)
+          recycler.swapAdapter(a.copy(animalItems), false)
+        case _ =>
+          Toast.makeText(context.application, R.string.error, Toast.LENGTH_SHORT).show()
+      }
+  }
+
+  def useCase4(implicit context: ImplicitContext) = Tweak[RecyclerView] {
     recycler =>
       recycler.getAdapter match {
         case a: ImageListAdapter =>
