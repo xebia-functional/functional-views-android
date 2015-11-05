@@ -16,7 +16,7 @@ You can compile this project and contribute improvements. To compile the project
 * From project root directory run:
 
 ```
-$ ./sbt
+$ sbt
 ```
 
 * Connect your phone and execute:
