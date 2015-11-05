@@ -28,7 +28,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class MainActivity
   extends AppCompatActivity
   with TypedFindView
-  with MainView
   with MainPresentationLogic
   with MainBusinessLogic
   with Contexts[Activity] {

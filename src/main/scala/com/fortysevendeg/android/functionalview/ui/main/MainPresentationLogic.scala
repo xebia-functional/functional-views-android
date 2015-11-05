@@ -32,7 +32,9 @@ import scala.language.postfixOps
 
 trait MainPresentationLogic {
 
-  self: MainView =>
+  val recycler: Option[RecyclerView]
+
+  val fabActionButton: Option[FloatingActionButton]
 
   def initUi(items: Seq[Item])(implicit context: ImplicitContext): Ui[_] =
     initRecycler(items) ~ initFabButton
@@ -57,14 +59,6 @@ trait MainPresentationLogic {
       case R.id.useCase4 => recycler <~ Transformations.useCase4
       case _ => Ui.nop
     }
-
-}
-
-trait MainView {
-
-  val recycler: Option[RecyclerView]
-
-  val fabActionButton: Option[FloatingActionButton]
 
 }
 
